@@ -10,6 +10,10 @@ The optimization was done using three different algorithms:
 
 The goal is to compare the three approaches and see which one can find the shortest valid calendar.
 
+![Travel distance before and after optimisation](figures/results.png)
+
+Starting from the original calendar (**146,768 km**), Simulated Annealing cuts the season's travel distance by **17.7%** while respecting every constraint.
+
 ## Objective
 
 During a MotoGP season, teams have to travel between every circuit. The order of the races therefore has a big impact on the total distance travelled.
@@ -74,12 +78,27 @@ The Genetic Algorithm found a solution that respects all of the constraints with
 
 The project was developed in Python using:
 
-* Python
 * NumPy
-* Pandas
-* Matplotlib
-* DEAP
-* PySwarms
+* simanneal (Simulated Annealing)
+* DEAP (Genetic Algorithm)
+* PySwarms (Particle Swarm Optimization)
+* unittest (8 unit tests on data loading, distances and constraints)
+
+## How to run
+
+```bash
+python -m venv .venv
+source .venv/bin/activate        # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+
+python calendar_optimisation.py          # Simulated Annealing (default)
+python calendar_optimisation.py ga       # Genetic Algorithm
+python calendar_optimisation.py pso      # Particle Swarm Optimization
+python calendar_optimisation.py all      # the three algorithms
+python calendar_optimisation.py test     # unit tests
+```
+
+The algorithms are stochastic: distances will vary slightly from one run to another.
 
 ## Conclusion
 
