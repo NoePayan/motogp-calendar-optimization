@@ -332,7 +332,7 @@ def crossoverStrategy(ind1, ind2):
     return ind1, ind2
 
 
-# function that will evaluate the strategy for a stock
+# function that will evaluate a calendar (individual) for the genetic algorithm
 def evaluateStrategy(individual):
     tracks = readTrackLocations()
     return (calculateSeasonDistancePenalties(tracks, individual, 8, 15, 35),)
@@ -347,7 +347,7 @@ def generateInitialItineraries(NmbPrt, initial_solution):
     return itineraries
 
 
-# function that will generate a shuffled itinerary. However, this will make sure that the bahrain, abu dhabi, and monaco
+# function that will generate a shuffled itinerary. However, this will make sure that the fixed races
 # will retain their fixed weeks in the calendar
 def generateShuffledItinerary(weekends):
     #creates a double of the current calendar and fixes Valencia
@@ -388,7 +388,7 @@ def haversine(rows, location1, location2):
     return res2
 
 
-# function that will initialise a strategy for the stocks. we will randomise all the weights here
+# function that will initialise an individual (a calendar) for the genetic algorithm
 def initIndividual(ind_class):
     weekends = readRaceWeekends()
     return ind_class(generateShuffledItinerary(weekends))
@@ -598,7 +598,7 @@ def swapIndex(itinerary, index):
         itinerary[index], itinerary[Swap] = itinerary[Swap], itinerary[index]
 
 
-# function that will run the simulated annealing case for shortening the distance seperately for both silverstone and monza
+# function that will run simulated annealing to shorten the season distance (Mugello as home race)
 def SAcases():
     tracks = readTrackLocations()
     weekends = readRaceWeekends()
@@ -619,7 +619,7 @@ def SAcases():
     printItinerary(tracks, best_state, 8)
 
 
-# function that will run the genetic algorithms cases for all four situations
+# function that will run the genetic algorithm to shorten the season distance
 # TODO
 def GAcases():
 
@@ -793,17 +793,25 @@ def PSOcases():
 
 
 if __name__ == '__main__':
-    # uncomment this run all the unit tests. when you have satisfied all the unit tests you will have a working simulation
-    # you can then comment this out and move onto your SA and GA solutions
-    #unittest.main()
+    import argparse
+    import sys
 
-    # we will assume that silverstone is the home track for this
+    parser = argparse.ArgumentParser(description="Optimise the MotoGP calendar to minimise travel distance.")
+    parser.add_argument(
+        "algorithm",
+        nargs="?",
+        default="sa",
+        choices=["sa", "ga", "pso", "all", "test"],
+        help="sa = simulated annealing (default), ga = genetic algorithm, "
+             "pso = particle swarm optimisation, all = run the three, test = run the unit tests",
+    )
+    args = parser.parse_args()
 
-    # run the cases for simulated annealing
-    SAcases()
-
-    # run the cases for genetic algorithms
-    # GAcases()
-
-    # run the cases for particle swarm optimisation
-    # PSOcases()
+    if args.algorithm == "test":
+        unittest.main(argv=[sys.argv[0]])
+    if args.algorithm in ("sa", "all"):
+        SAcases()
+    if args.algorithm in ("ga", "all"):
+        GAcases()
+    if args.algorithm in ("pso", "all"):
+        PSOcases()
